@@ -1,0 +1,2 @@
+rootProject.name='PuerDev(VK)'
+include ':app'

@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">PuerDev(VK)</string>
+    <integer name="com_vk_sdk_AppId">7511387</integer>
+</resources>
