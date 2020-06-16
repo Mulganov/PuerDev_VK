@@ -1,7 +1,9 @@
 package com.mulganov.test_task.puerdev_vk;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,6 +27,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    private MainActivity activity;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,10 +41,16 @@ public class MainActivity extends AppCompatActivity {
 
         VK.initialize(this);
 
+        activity = this;
+
         if (!VK.isLoggedIn())
             VK.login(this, a);
+        else
+            getFriends();
 
+    }
 
+    public void getFriends(){
         VK.execute(
                 new VKFriendsRequest()
                 ,
@@ -52,7 +62,8 @@ public class MainActivity extends AppCompatActivity {
 
                         runOnUiThread(new Runnable() {
                             @Override
-                            public void run() {RecyclerView recyclerView = (RecyclerView) findViewById(R.id.list);
+                            public void run() {
+                                RecyclerView recyclerView = (RecyclerView) findViewById(R.id.list);
 
                                 recyclerView.setHasFixedSize(true);
 
@@ -62,11 +73,27 @@ public class MainActivity extends AppCompatActivity {
                                 recyclerView.setAdapter(adapter);
                             }
                         });
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getApplicationContext(), "success", Toast.LENGTH_LONG).show();
+                            }
+                        });
+
                     }
 
                     @Override
-                    public void fail(@NotNull VKApiExecutionException e) {
+                    public void fail(@NotNull final VKApiExecutionException e) {
                         System.out.println("fail");
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                Toast.makeText(getApplicationContext(), "fail: " + e.getErrorMsg(), Toast.LENGTH_LONG).show();
+                            }
+                        });
                     }
                 }
         );
@@ -77,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         VKAuthCallback callback = new VKAuthCallback() {
             @Override
             public void onLogin(@NotNull VKAccessToken vkAccessToken) {
-
+                getFriends();
             }
 
             @Override
